@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>六安水利招采监测</title>
+<style>
+  :root{--ink:#0e2b33;--ink2:#12454f;--teal:#0f7d8c;--teal-d:#0a5e6a;--paper:#f5f8f9;--card:#fff;--line:#dde6e8;--muted:#5b7178;--active:#0f9d76;--result:#7a5cc4;--amber:#c07a17;--grey:#8a9aa0;--shadow:0 1px 2px rgba(14,43,51,.06),0 6px 20px rgba(14,43,51,.05)}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC","Noto Sans CJK SC",sans-serif;color:var(--ink);background:var(--paper);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}.tnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+  header{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,var(--ink),var(--ink2));color:#eaf3f4;box-shadow:var(--shadow)}
+  .hwrap{max-width:1120px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .brand{display:flex;align-items:baseline;gap:10px}.brand h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.5px}.brand .sub{font-size:12px;color:#9fc2c7}
+  .hstat{margin-left:auto;display:flex;align-items:center;gap:18px;font-size:12px;color:#bcd6d9}.hstat b{color:#fff;font-size:15px}
+  .tools{max-width:1120px;margin:18px auto 0;padding:0 20px}
+  .searchbar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .searchbar input{flex:1;min-width:200px;border:1px solid var(--line);border-radius:9px;padding:10px 14px;font-size:14px;background:var(--card);color:var(--ink)}
+  .searchbar input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(15,125,140,.12)}
+  select{border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:13px;background:var(--card);color:var(--ink);cursor:pointer}
+  .expbtn{border:1px solid var(--teal);background:var(--teal);color:#fff;padding:10px 15px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600}.expbtn:hover{background:var(--teal-d)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:9px}
+  .chips .lab{font-size:12px;color:var(--muted);align-self:center;margin-right:2px;min-width:56px}
+  .chip{border:1px solid var(--line);background:var(--card);color:var(--muted);padding:5px 12px;border-radius:20px;cursor:pointer;font-size:13px;transition:.12s}
+  .chip:hover{border-color:var(--teal);color:var(--teal)}.chip.on{background:var(--ink2);border-color:var(--ink2);color:#fff}.chip .c{opacity:.65;font-size:11px;margin-left:3px}
+  main{max-width:1120px;margin:16px auto 60px;padding:0 20px}
+  .count{font-size:12px;color:var(--muted);margin:6px 2px 12px}
+  .row{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--grey);border-radius:10px;margin-bottom:9px;box-shadow:var(--shadow);transition:.12s;overflow:hidden}
+  .row:hover{border-color:var(--teal);border-left-color:var(--teal)}
+  .rhead{display:flex;align-items:flex-start;gap:14px;padding:13px 16px;cursor:pointer}
+  .row.s-gonggao{border-left-color:var(--active)}.row.s-houxuan{border-left-color:var(--amber)}.row.s-result{border-left-color:var(--result)}.row.s-change{border-left-color:var(--grey)}
+  .date{min-width:82px;color:var(--muted);font-size:12.5px;padding-top:2px}
+  .body{flex:1;min-width:0}.title{font-size:14.5px;font-weight:600;color:var(--ink);line-height:1.5}
+  .row:hover .title{color:var(--teal-d)}
+  .meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px;align-items:center}
+  .tag{font-size:11.5px;padding:2px 9px;border-radius:5px;white-space:nowrap}
+  .tag.region{background:#eef4f5;color:var(--ink2);border:1px solid #dce8ea}
+  .tag.stage{color:#fff}.stage-gonggao{background:var(--active)}.stage-houxuan{background:var(--amber)}.stage-result{background:var(--result)}.stage-change{background:var(--grey)}.stage-other{background:#6b8288}
+  .kw{font-size:11px;color:var(--teal);background:#e7f4f5;padding:1px 7px;border-radius:4px}
+  .go{color:var(--grey);font-size:16px;align-self:center;padding-left:4px;transition:.15s}.row.open .go{transform:rotate(90deg);color:var(--teal)}
+  .panel{display:none;padding:0 16px 15px 112px}.row.open .panel{display:block}
+  .sum{background:#f2f7f8;border:1px solid #e2ecee;border-radius:8px;padding:11px 13px;font-size:13px;color:#33484e;line-height:1.7;white-space:pre-wrap}
+  .sum.empty{color:var(--muted)}
+  .pmeta{font-size:11.5px;color:var(--muted);margin:9px 0 10px}
+  .tl{margin:4px 0 12px;border-left:2px solid #e2ecee;padding-left:12px}
+  .tl-item{display:flex;align-items:center;gap:9px;padding:3px 0;font-size:12.5px}
+  .tl-item .d{color:var(--muted);min-width:74px}
+  .tl-item .st{font-size:11px;padding:1px 8px;border-radius:4px;color:#fff}
+  .tl-item a{color:var(--teal);font-size:12px}.tl-item a:hover{text-decoration:underline}
+  .open-orig{display:inline-flex;align-items:center;gap:6px;background:var(--teal);color:#fff;border:none;padding:8px 15px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none}.open-orig:hover{background:var(--teal-d)}
+  .msg{text-align:center;padding:60px 20px;color:var(--muted)}
+  .pager{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:20px;flex-wrap:wrap}
+  .pager button{border:1px solid var(--line);background:var(--card);color:var(--ink);min-width:36px;height:34px;border-radius:8px;cursor:pointer;font-size:13px;padding:0 10px}
+  .pager button:hover:not(:disabled){border-color:var(--teal);color:var(--teal)}.pager button.on{background:var(--ink2);border-color:var(--ink2);color:#fff}.pager button:disabled{opacity:.4;cursor:default}
+  .note{max-width:1120px;margin:0 auto;padding:8px 20px 0;font-size:12px;color:var(--muted)}
+  @media(max-width:640px){.date{min-width:0;font-size:12px}.rhead{gap:10px;padding:12px 13px}.panel{padding-left:13px}.hstat{width:100%;order:3}}
+</style></head>
+<body>
+<header><div class="hwrap">
+  <div class="brand"><h1>六安水利招采监测</h1><span class="sub">全市水利行业 招标 · 采购 · 中标 · 成交</span></div>
+  <div class="hstat"><span>共 <b id="hcount" class="tnum">0</b> 个项目</span><span>数据截至 <b class="tnum">__CAP__</b></span></div>
+</div></header>
+<div class="tools">
+  <div class="searchbar">
+    <input id="q" placeholder="在项目名中搜索，如：水库、河道、泵站、金寨…" oninput="apply()">
+    <select id="days" onchange="apply()"><option value="30">近 30 天</option><option value="60">近 60 天</option><option value="90" selected>近 90 天</option><option value="9999">全部</option></select>
+    <select id="sort" onchange="apply()"><option value="desc">最新在前</option><option value="asc">最早在前</option></select>
+    <button class="expbtn" onclick="exportCsv()">导出 CSV</button>
+  </div>
+  <div class="chips" id="regionChips"><span class="lab">地区</span></div>
+  <div class="chips" id="stageChips"><span class="lab">状态</span></div>
+</div>
+<div class="note">每个项目只显示一行，标签为当前最新状态；点开可看进度时间线与摘要，点各环节链接查看对应公告原文。数据来源：六安市公共资源交易中心（抓取快照）。</div>
+<main><div class="count" id="count"></div><div id="list"></div><div class="pager" id="pager"></div></main>
+<script>
+const DATA = __DATA__;
+const REGIONS=["全部","金安区","裕安区","叶集区","霍邱县","舒城县","金寨县","霍山县","市直","其他"];
+const STAGES=["全部","招标·采购公告","中标候选人","中标·成交结果","澄清·变更","其他"];
+const PAGE_SIZE=25;
+let VIEW=[],region="全部",stage="全部",page=1;
+const MAXDATE=DATA.reduce((m,x)=>x.date>m?x.date:m,"0");
+function daysAgo(n){const d=new Date(MAXDATE);d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);}
+function sCls(s){return s==="招标·采购公告"?"gonggao":s==="中标候选人"?"houxuan":s==="中标·成交结果"?"result":s==="澄清·变更"?"change":"other";}
+function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function base(){const dv=document.getElementById("days").value,lim=dv==="9999"?"0":daysAgo(+dv);return DATA.filter(x=>x.date>=lim);}
+function buildChips(){
+  const B=base(),rc=document.getElementById("regionChips"),sc=document.getElementById("stageChips");
+  rc.querySelectorAll(".chip").forEach(e=>e.remove());sc.querySelectorAll(".chip").forEach(e=>e.remove());
+  REGIONS.forEach(r=>{const n=r==="全部"?B.length:B.filter(x=>x.region===r).length;if(r!=="全部"&&!n)return;
+    const el=document.createElement("span");el.className="chip"+(r===region?" on":"");el.innerHTML=esc(r)+'<span class="c tnum">'+n+'</span>';el.onclick=()=>{region=r;page=1;apply();};rc.appendChild(el);});
+  STAGES.forEach(s=>{const n=s==="全部"?B.length:B.filter(x=>x.stage===s).length;if(s!=="全部"&&!n)return;
+    const el=document.createElement("span");el.className="chip"+(s===stage?" on":"");el.innerHTML=esc(s)+'<span class="c tnum">'+n+'</span>';el.onclick=()=>{stage=s;page=1;apply();};sc.appendChild(el);});
+}
+function apply(){
+  const q=document.getElementById("q").value.trim(),sort=document.getElementById("sort").value;buildChips();
+  VIEW=base().filter(x=>{if(region!=="全部"&&x.region!==region)return false;if(stage!=="全部"&&x.stage!==stage)return false;if(q&&x.title.indexOf(q)===-1)return false;return true;});
+  VIEW.sort((a,b)=>sort==="asc"?(a.date<b.date?-1:1):(a.date>b.date?-1:1));render();
+}
+function render(){
+  const list=document.getElementById("list"),total=VIEW.length,pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+  if(page>pages)page=pages;const start=(page-1)*PAGE_SIZE,slice=VIEW.slice(start,start+PAGE_SIZE);
+  document.getElementById("hcount").textContent=DATA.length;
+  document.getElementById("count").textContent=total?`共 ${total} 个项目，显示第 ${start+1}–${Math.min(start+PAGE_SIZE,total)} 个`:"";
+  if(!total){list.innerHTML='<div class="msg">该条件下暂无项目。可放宽时间窗口或清空筛选。</div>';document.getElementById("pager").innerHTML="";return;}
+  list.innerHTML=slice.map((x,i)=>{const sc=sCls(x.stage);
+    const kw=(x.keywords||[]).slice(0,4).map(k=>`<span class="kw">${esc(k)}</span>`).join("");
+    const sumHtml=x.summary&&x.summary.length>=6?`<div class="sum">${esc(x.summary)}</div>`:`<div class="sum empty">该项目暂无文字摘要，点下方链接查看原文。</div>`;
+    const tl=(x.timeline||[]).slice().reverse().map(t=>`<div class="tl-item"><span class="d tnum">${esc(t.date)}</span><span class="st stage-${sCls(t.stage)}">${esc(t.stage)}</span><a href="${t.url}" target="_blank" rel="noopener">查看公告 ↗</a></div>`).join("");
+    return `<div class="row s-${sc}" id="r${i}">
+      <div class="rhead" onclick="toggle(${i})">
+        <div class="date tnum">${esc(x.date)}</div>
+        <div class="body"><div class="title">${esc(x.title)}</div>
+          <div class="meta"><span class="tag region">${esc(x.region)}</span><span class="tag stage stage-${sc}">${esc(x.stage)}</span>${kw}</div></div>
+        <div class="go">›</div>
+      </div>
+      <div class="panel">
+        ${sumHtml}
+        <div class="pmeta">项目进度（共 ${x.docs} 份公告文件）：</div>
+        <div class="tl">${tl}</div>
+        <a class="open-orig" href="${x.url}" target="_blank" rel="noopener">打开当前公告 ↗</a>
+      </div></div>`;}).join("");
+  renderPager(pages);
+}
+function toggle(i){document.getElementById("r"+i).classList.toggle("open");}
+function renderPager(pages){const p=document.getElementById("pager");if(pages<=1){p.innerHTML="";return;}
+  let h=`<button ${page===1?"disabled":""} onclick="go(${page-1})">‹</button>`;
+  for(let i=1;i<=pages;i++){if(i===1||i===pages||(i>=page-2&&i<=page+2))h+=`<button class="${i===page?"on":""}" onclick="go(${i})">${i}</button>`;else if(i===page-3||i===page+3)h+=`<span style="color:var(--muted)">…</span>`;}
+  h+=`<button ${page===pages?"disabled":""} onclick="go(${page+1})">›</button>`;p.innerHTML=h;}
+function go(n){page=n;render();window.scrollTo({top:0,behavior:"smooth"});}
+function exportCsv(){
+  const rows=[["当前状态日期","地区","当前状态","命中关键词","项目名称","摘要","当前公告链接"]];
+  VIEW.forEach(x=>rows.push([x.date,x.region,x.stage,(x.keywords||[]).join(" "),x.title,x.summary,x.url]));
+  const csv="\ufeff"+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="luan_water_tender.csv";a.click();
+}
+apply();
+</script></body></html>
